@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<style>
+    background-color: #EFDECD;
+</style>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="canonical" href="https://html5-templates.com/" />
+    <title>My First Choice</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <meta name="description" content="Simplified Bootstrap template with sticky menu">
+    <link href="{{url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='css/sticky-menu.css')}}" rel="stylesheet">
+</head>
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+
+    <!-- Welcome   -->
+    <section id="welcome" class="about-section">
+        <div class="container">
+            <div class="row">
+                <button class="w3-button w3-xlarge w3-black">Upload Photo</button>
+                <p>&nbsp;</p>
+                <form class="center" method="post">
+    <input type="text" name="posttext" placeholder="post text"/>
+</form>
+                <p>&nbsp;</p>
+<button class="center w3-btn w3-ripple w3-yellow">Post</button>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <!-- jQuery -->
+    <script src="{{url_for('static',filename='js/jquery.js')}}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
+
+    <!-- Scrolling Nav JavaScript -->
+    <script src="{{url_for('static',filename='js/jquery.easing.min.js')}}"></script>
+    <script src="{{url_for('static',filename='js/sticky-menu.js')}}"></script>
+
+</body>
+
+</html>
+
+
+
