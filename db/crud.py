@@ -4,6 +4,8 @@ from db.photo_info import PhotoInfo
 from db.public_user_info import PublicUserInfo
 from db.private_user_info import PrivateUserInfo
 
+from boto3.dynamodb.conditions import Key
+
 from db.constants import *
 
 client = boto3.client('dynamodb')
@@ -85,14 +87,13 @@ def select_photo_info(username, photo_location):
     return response['Item']
 
 
+# this returns a list of maps where each map is an photo_info object
 def select_all_photo_info_for_user(username):
     table = dynamodb.Table(PHOTO_INFO)
-    response = table.get_item(
-        Key={
-            USERNAME: username
-        }
+    response = table.query(
+        KeyConditionExpression=Key(USERNAME).eq(username)
     )
-    return response
+    return response['Items']
 
 
 def demo_update_public_user_info():
@@ -121,25 +122,25 @@ def demo_update_photo_info():
     print(json.dumps(response, indent=4))
 
 
-def demo_select_public_user_info ():
+def demo_select_public_user_info():
     response = select_public_user_info('username1')
     print("select_public_user_info succeeded:")
     print(response)
     print(response[USERNAME])
 
 
-def demo_select_private_user_info ():
+def demo_select_private_user_info():
     response = select_private_user_info('username1')
     print("select_private_user_info succeeded:")
     print(response)
     print(response[USERNAME])
 
 
-def demo_select_photo_info ():
+def demo_select_photo_info():
     response = select_photo_info('username1', 'no_photo_location')
     print("select_photo_info succeeded:")
     print(response)
-    print(response[USERNAME])
+    print(response[USERNAME]) 
 
 
 def demo_select_all_photo_info_for_user():
@@ -148,9 +149,5 @@ def demo_select_all_photo_info_for_user():
     print(response)
 
 
-demo_update_public_user_info()
-demo_update_private_user_info()
-demo_update_photo_info()
-demo_select_public_user_info()
-demo_select_private_user_info()
-demo_select_photo_info()
+demo_select_all_photo_info_for_user()
+

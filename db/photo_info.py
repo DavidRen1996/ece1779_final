@@ -4,6 +4,3 @@ class PhotoInfo:
         self.photo_location = photo_location
         self.gender_and_interest = gender_and_interest
         self.related_photos = related_photos
-
-    def cast_map(self, **entries):
-        self.__dict__.update(entries)
