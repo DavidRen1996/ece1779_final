@@ -1,3 +1,6 @@
+S3_BUCKET_NAME = 'to be filled'
+
+
 PUBLIC_USER_INFO = 'public_user_info'
 PRIVATE_USER_INFO = 'private_user_info'
 PHOTO_INFO = 'photo_info'
@@ -16,6 +19,10 @@ DESCRIPTION = 'description'
 INTERESTED_PHOTOS_MAP = 'interested_photos_map'
 PENDING_REQUESTS_MAP = 'pending_requests_map'
 RECEIVED_INQUIRES = 'received_inquiries_map'
+PHOTO_TYPE = 'PHOTO_TYPE'
+
+PHOTO_TYPE_SELF = 1
+PHOTO_TYPE_INTERESTED = 2
 
 GENDER_AND_INTEREST_MF = 1
 GENDER_AND_INTEREST_MM = 2

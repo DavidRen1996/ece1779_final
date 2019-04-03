@@ -50,6 +50,7 @@ def update_photo_info(photo_info):
         Item={
             USERNAME: photo_info.username,
             PHOTO_LOCATION: photo_info.photo_location,
+            PHOTO_TYPE: photo_info.photo_type,
             GENDER_AND_INTEREST: photo_info.gender_and_interest,
             RELATED_PHOTOS_MAP: photo_info.related_photos
         })
@@ -95,6 +96,8 @@ def select_all_photo_info_for_user(username):
     )
     return response['Items']
 
+# todo add function to select all photos with the correct type for the user
+
 
 def demo_update_public_user_info():
     public_user_info = PublicUserInfo('username1', 'email1', 'name1', '2000-01-01', GENDER_AND_INTEREST_MF, 'region1',
@@ -115,8 +118,8 @@ def demo_update_private_user_info():
 
 
 def demo_update_photo_info():
-    photo_info = PhotoInfo('username1', 'no_photo_location', 1,
-                           {'photo_of_username2': 'username2', 'photo_of_username3': 'username3'})
+    photo_info = PhotoInfo('username1', 'no_photo_location', PHOTO_TYPE_SELF, GENDER_AND_INTEREST_MF,
+                           {'photo_location_of_username2': 'username2', 'photo_location_of_username3': 'username3'})
     response = update_photo_info(photo_info)
     print("update_photo_info succeeded:")
     print(json.dumps(response, indent=4))
@@ -149,5 +152,6 @@ def demo_select_all_photo_info_for_user():
     print(response)
 
 
-demo_select_all_photo_info_for_user()
+demo_update_photo_info()
 
+demo_select_photo_info()
