@@ -4,9 +4,8 @@ from db.photo_info import PhotoInfo
 from db.public_user_info import PublicUserInfo
 from db.private_user_info import PrivateUserInfo
 
-from db.constants import *
+from app.ml_util import face_compare
 from db.crud import *
-
 
 
 def demo_update_public_user_info():
@@ -60,4 +59,5 @@ def demo_select_all_photo_info_for_user():
     print(response)
 
 
-select_all_public_user_info(GENDER_AND_INTEREST_MF)
+print(face_compare('14566527_937379273061649_4426785017749831680_n-e1502115218340.jpg',
+                   'Hottest-Korean-Models-Nam-Gyu-Ri.jpg'))

@@ -1,4 +1,3 @@
-S3_BUCKET_NAME = 'to be filled'
 
 PUBLIC_USER_INFO = 'public_user_info'
 PRIVATE_USER_INFO = 'private_user_info'
