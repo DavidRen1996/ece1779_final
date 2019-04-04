@@ -12,10 +12,6 @@ client = boto3.client('dynamodb')
 dynamodb = boto3.resource('dynamodb')
 
 
-def get_public_user_info(username):
-    return dynamodb.get_item(TableName=PUBLIC_USER_INFO, Key={'username': {'S': username}})
-
-
 def update_public_user_info(public_user_info):
     table = dynamodb.Table(PUBLIC_USER_INFO)
     response = table.put_item(
@@ -24,6 +20,8 @@ def update_public_user_info(public_user_info):
             EMAIL: public_user_info.email,
             NAME: public_user_info.name,
             BIRTHDAY: public_user_info.birthday,
+
+            PHOTO_ID_LOCATION: public_user_info.photo_id_location,
             GENDER_AND_INTEREST: public_user_info.gender_and_interest,
             REGION: public_user_info.region,
             DESCRIPTION: public_user_info.description
@@ -37,7 +35,7 @@ def update_private_user_info(private_user_info):
         Item={
             USERNAME: private_user_info.username,
             ENCRYPTED_PASSWORD: private_user_info.encrypted_password,
-            INTERESTED_PHOTOS_MAP: private_user_info.interested_photos_map,
+            INTERESTED_PHOTOS_LIST: private_user_info.interested_photos_map,
             PENDING_REQUESTS_MAP: private_user_info.pending_requests_map,
             RELATED_PHOTOS_MAP: private_user_info.received_inquiries_map
         })
@@ -101,7 +99,7 @@ def select_all_photo_info_for_user(username):
 
 def demo_update_public_user_info():
     public_user_info = PublicUserInfo('username1', 'email1', 'name1', '2000-01-01', GENDER_AND_INTEREST_MF, 'region1',
-                                      'description1')
+                                      'description1','photo_id1')
     response = update_public_user_info(public_user_info)
     print("demo_update_public_user_info succeeded:")
     print(json.dumps(response, indent=4))
@@ -152,6 +150,7 @@ def demo_select_all_photo_info_for_user():
     print(response)
 
 
-demo_update_photo_info()
-
-demo_select_photo_info()
+#demo_update_photo_info()
+demo_update_public_user_info()
+demo_select_public_user_info()
+#demo_select_photo_info()

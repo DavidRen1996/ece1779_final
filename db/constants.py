@@ -16,10 +16,11 @@ GENDER_AND_INTEREST = 'gender_and_interest'
 BIRTHDAY = 'birthday'
 REGION = 'region'
 DESCRIPTION = 'description'
-INTERESTED_PHOTOS_MAP = 'interested_photos_map'
+INTERESTED_PHOTOS_LIST = 'interested_photos_list'
 PENDING_REQUESTS_MAP = 'pending_requests_map'
 RECEIVED_INQUIRES = 'received_inquiries_map'
-PHOTO_TYPE = 'PHOTO_TYPE'
+PHOTO_TYPE = 'photo_type'
+PHOTO_ID_LOCATION='photo_id_location'
 
 PHOTO_TYPE_SELF = 1
 PHOTO_TYPE_INTERESTED = 2
