@@ -33,6 +33,7 @@ def update_private_user_info(private_user_info):
     table = dynamodb.Table(PRIVATE_USER_INFO)
     response = table.put_item(
         Item={
+
             USERNAME: private_user_info.username,
             ENCRYPTED_PASSWORD: private_user_info.encrypted_password,
             INTERESTED_PHOTOS_LIST: private_user_info.interested_photos_map,
