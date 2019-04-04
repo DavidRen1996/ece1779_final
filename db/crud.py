@@ -1,19 +1,12 @@
 import boto3
-import json
-from db.photo_info import PhotoInfo
-from db.public_user_info import PublicUserInfo
-from db.private_user_info import PrivateUserInfo
 
-from boto3.dynamodb.conditions import Key
+from werkzeug.security import generate_password_hash, check_password_hash
+from boto3.dynamodb.conditions import Key, Attr
 
 from db.constants import *
 
 client = boto3.client('dynamodb')
 dynamodb = boto3.resource('dynamodb')
-
-
-def get_public_user_info(username):
-    return dynamodb.get_item(TableName=PUBLIC_USER_INFO, Key={'username': {'S': username}})
 
 
 def update_public_user_info(public_user_info):
@@ -32,11 +25,13 @@ def update_public_user_info(public_user_info):
 
 
 def update_private_user_info(private_user_info):
+    encrypted_password = generate_password_hash(private_user_info.password)
+
     table = dynamodb.Table(PRIVATE_USER_INFO)
     response = table.put_item(
         Item={
             USERNAME: private_user_info.username,
-            ENCRYPTED_PASSWORD: private_user_info.encrypted_password,
+            ENCRYPTED_PASSWORD: encrypted_password,
             INTERESTED_PHOTOS_MAP: private_user_info.interested_photos_map,
             PENDING_REQUESTS_MAP: private_user_info.pending_requests_map,
             RELATED_PHOTOS_MAP: private_user_info.received_inquiries_map
@@ -64,17 +59,38 @@ def select_public_user_info(username):
             USERNAME: username
         }
     )
-    return response['Item']
+    return resolve_response(response)
 
 
-def select_private_user_info(username):
+def select_all_public_user_info(gender_and_interest):
+    table = dynamodb.Table(PUBLIC_USER_INFO)
+    interest_list = GENDER_INTEREST_MAP[gender_and_interest]
+    response = table.scan(
+        FilterExpression=Attr(GENDER_AND_INTEREST).eq(interest_list[0]) | Attr(GENDER_AND_INTEREST).eq(
+            interest_list[1])
+    )
+    return resolve_response(response)
+
+
+def select_private_user_info(username, password):
     table = dynamodb.Table(PRIVATE_USER_INFO)
     response = table.get_item(
         Key={
             USERNAME: username
         }
     )
-    return response['Item']
+
+    if 'Item' not in response:
+        print('username ' + username + ' not found')
+        return None
+
+    private_info = response['Item']
+
+    if not check_password_hash(private_info[ENCRYPTED_PASSWORD], password):
+        print('password for ' + username + 'was incorrect')
+        return None
+
+    return private_info
 
 
 def select_photo_info(username, photo_location):
@@ -85,73 +101,24 @@ def select_photo_info(username, photo_location):
             PHOTO_LOCATION: photo_location
         }
     )
-    return response['Item']
+    return resolve_response(response)
 
 
 # this returns a list of maps where each map is an photo_info object
-def select_all_photo_info_for_user(username):
+def select_all_photo_info_for_user(username, photo_type):
     table = dynamodb.Table(PHOTO_INFO)
     response = table.query(
-        KeyConditionExpression=Key(USERNAME).eq(username)
+        KeyConditionExpression=Key(USERNAME).eq(username),
+        FilterExpression=Attr(PHOTO_TYPE).eq(photo_type),
     )
-    return response['Items']
-
-# todo add function to select all photos with the correct type for the user
+    return resolve_response(response)
 
 
-def demo_update_public_user_info():
-    public_user_info = PublicUserInfo('username1', 'email1', 'name1', '2000-01-01', GENDER_AND_INTEREST_MF, 'region1',
-                                      'description1')
-    response = update_public_user_info(public_user_info)
-    print("demo_update_public_user_info succeeded:")
-    print(json.dumps(response, indent=4))
+def resolve_response(response):
+    if 'Item' in response:
+        return response['Item']
 
+    if 'Items' in response:
+        return response['Items']
 
-def demo_update_private_user_info():
-    private_user_info = PrivateUserInfo('username1', 'encrypted_password1',
-                                        {'photo_location_of_username2': 'username2',
-                                         'photo_location_of_username3': 'username3'},
-                                        {}, {})
-    response = update_private_user_info(private_user_info)
-    print('update_private_user_info succeeded:')
-    print(json.dumps(response, indent=4))
-
-
-def demo_update_photo_info():
-    photo_info = PhotoInfo('username1', 'no_photo_location', PHOTO_TYPE_SELF, GENDER_AND_INTEREST_MF,
-                           {'photo_location_of_username2': 'username2', 'photo_location_of_username3': 'username3'})
-    response = update_photo_info(photo_info)
-    print("update_photo_info succeeded:")
-    print(json.dumps(response, indent=4))
-
-
-def demo_select_public_user_info():
-    response = select_public_user_info('username1')
-    print("select_public_user_info succeeded:")
-    print(response)
-    print(response[USERNAME])
-
-
-def demo_select_private_user_info():
-    response = select_private_user_info('username1')
-    print("select_private_user_info succeeded:")
-    print(response)
-    print(response[USERNAME])
-
-
-def demo_select_photo_info():
-    response = select_photo_info('username1', 'no_photo_location')
-    print("select_photo_info succeeded:")
-    print(response)
-    print(response[USERNAME]) 
-
-
-def demo_select_all_photo_info_for_user():
-    response = select_all_photo_info_for_user('username1')
-    print("select_all_photo_info_for_user succeeded:")
-    print(response)
-
-
-demo_update_photo_info()
-
-demo_select_photo_info()
+    return None

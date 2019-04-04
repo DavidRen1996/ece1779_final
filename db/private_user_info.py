@@ -1,8 +1,8 @@
 class PrivateUserInfo:
-    def __init__(self, username, encrypted_password, interested_photos_map, pending_requests_map,
+    def __init__(self, username, password, interested_photos_map, pending_requests_map,
                  received_inquiries_map):
         self.username = username
-        self.encrypted_password = encrypted_password
+        self.password = password
         self.interested_photos_map = interested_photos_map
         self.pending_requests_map = pending_requests_map
         self.received_inquiries_map = received_inquiries_map

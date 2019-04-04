@@ -1,6 +1,5 @@
 S3_BUCKET_NAME = 'to be filled'
 
-
 PUBLIC_USER_INFO = 'public_user_info'
 PRIVATE_USER_INFO = 'private_user_info'
 PHOTO_INFO = 'photo_info'
@@ -30,3 +29,12 @@ GENDER_AND_INTEREST_MB = 3
 GENDER_AND_INTEREST_FF = 4
 GENDER_AND_INTEREST_FM = 5
 GENDER_AND_INTEREST_FB = 6
+
+GENDER_INTEREST_MAP = {
+    1: (5, 6),
+    2: (2, 3),
+    3: (2, 3, 5, 6),
+    4: (4, 5),
+    5: (1, 3),
+    6: (1, 3, 4, 6)
+}
