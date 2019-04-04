@@ -3,8 +3,10 @@ import json
 from db.photo_info import PhotoInfo
 from db.public_user_info import PublicUserInfo
 from db.private_user_info import PrivateUserInfo
+
 from db.constants import *
 from db.crud import *
+
 
 
 def demo_update_public_user_info():
@@ -17,9 +19,7 @@ def demo_update_public_user_info():
 
 def demo_update_private_user_info():
     private_user_info = PrivateUserInfo('username4', 'password4',
-                                        {'photo_location_of_username2': 'username2',
-                                         'photo_location_of_username3': 'username3'},
-                                        {}, {})
+                                        {'location_of_interested_photo1', 'location_of_interested_photo2'}, {}, {})
     response = update_private_user_info(private_user_info)
     print('update_private_user_info succeeded:')
     print(json.dumps(response, indent=4))
