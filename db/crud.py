@@ -17,6 +17,7 @@ def update_public_user_info(public_user_info):
             EMAIL: public_user_info.email,
             NAME: public_user_info.name,
             BIRTHDAY: public_user_info.birthday,
+            PHOTO_ID_LOCATION: public_user_info.photo_id_location,
             GENDER_AND_INTEREST: public_user_info.gender_and_interest,
             REGION: public_user_info.region,
             DESCRIPTION: public_user_info.description
@@ -32,7 +33,7 @@ def update_private_user_info(private_user_info):
         Item={
             USERNAME: private_user_info.username,
             ENCRYPTED_PASSWORD: encrypted_password,
-            INTERESTED_PHOTOS_MAP: private_user_info.interested_photos_map,
+            INTERESTED_PHOTOS_LIST: private_user_info.interested_photos_map,
             PENDING_REQUESTS_MAP: private_user_info.pending_requests_map,
             RELATED_PHOTOS_MAP: private_user_info.received_inquiries_map
         })
