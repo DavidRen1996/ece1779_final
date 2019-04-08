@@ -3,8 +3,8 @@ import json
 from db.photo_info import PhotoInfo
 from db.public_user_info import PublicUserInfo
 from db.private_user_info import PrivateUserInfo
+from db.user_location import UserLocation
 
-from app.ml_util import face_compare
 from db.crud import *
 
 
@@ -29,6 +29,13 @@ def demo_update_photo_info():
                            {'photo_location_of_username2': 'username2', 'photo_location_of_username3': 'username3'})
     response = update_photo_info(photo_info)
     print("update_photo_info succeeded:")
+    print(json.dumps(response, indent=4))
+
+
+def demo_update_user_location():
+    user_location = UserLocation(1, 'username1', 10.01, 12.01)
+    response = update_user_location(user_location)
+    print("update_user_location succeeded:")
     print(json.dumps(response, indent=4))
 
 
@@ -59,5 +66,10 @@ def demo_select_all_photo_info_for_user():
     print(response)
 
 
-print(face_compare('14566527_937379273061649_4426785017749831680_n-e1502115218340.jpg',
-                   'Hottest-Korean-Models-Nam-Gyu-Ri.jpg'))
+def demo_select_nearby_users():
+    response = select_nearby_users(1, 10.05, 12.05, 300)
+    print("demo_select_nearby_users succeeded:")
+    print(response)
+
+
+demo_select_nearby_users()

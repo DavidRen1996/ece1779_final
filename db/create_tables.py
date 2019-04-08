@@ -14,13 +14,13 @@ def create_tables():
             TableName=PUBLIC_USER_INFO,
             KeySchema=[
                 {
-                    'AttributeName': 'username',
+                    'AttributeName': USERNAME,
                     'KeyType': 'HASH'
                 }
             ],
             AttributeDefinitions=[
                 {
-                    'AttributeName': 'username',
+                    'AttributeName': USERNAME,
                     'AttributeType': 'S'
                 }
             ],
@@ -39,13 +39,13 @@ def create_tables():
             TableName=PRIVATE_USER_INFO,
             KeySchema=[
                 {
-                    'AttributeName': 'username',
+                    'AttributeName': USERNAME,
                     'KeyType': 'HASH'
                 }
             ],
             AttributeDefinitions=[
                 {
-                    'AttributeName': 'username',
+                    'AttributeName': USERNAME,
                     'AttributeType': 'S'
                 },
             ],
@@ -61,24 +61,24 @@ def create_tables():
     # Create the DynamoDB table.
     if PHOTO_INFO not in existing_tables:
         table = dynamodb.create_table(
-            TableName='photo_info',
+            TableName=PHOTO_INFO,
             KeySchema=[
                 {
-                    'AttributeName': 'username',
+                    'AttributeName': USERNAME,
                     'KeyType': 'HASH'
                 },
                 {
-                    'AttributeName': 'photo_location',
+                    'AttributeName': PHOTO_LOCATION,
                     'KeyType': 'RANGE'
                 }
             ],
             AttributeDefinitions=[
                 {
-                    'AttributeName': 'username',
+                    'AttributeName': USERNAME,
                     'AttributeType': 'S'
                 },
                 {
-                    'AttributeName': 'photo_location',
+                    'AttributeName': PHOTO_LOCATION,
                     'AttributeType': 'S'
                 }
             ],
@@ -89,6 +89,38 @@ def create_tables():
         print('table created with rows ' + str(table.item_count))
     else:
         print(PHOTO_INFO + " table already exists")
+
+    # Create the DynamoDB table.
+    if USER_LOCATION not in existing_tables:
+        table = dynamodb.create_table(
+            TableName=USER_LOCATION,
+            KeySchema=[
+                {
+                    'AttributeName': USERNAME,
+                    'KeyType': 'HASH'
+                },
+                {
+                    'AttributeName': GENDER_AND_INTEREST,
+                    'KeyType': 'RANGE'
+                }
+            ],
+            AttributeDefinitions=[
+                {
+                    'AttributeName': USERNAME,
+                    'AttributeType': 'S'
+                },
+                {
+                    'AttributeName': GENDER_AND_INTEREST,
+                    'AttributeType': 'N'
+                }
+            ],
+            BillingMode='PAY_PER_REQUEST',
+        )
+        # Wait until the table exists.
+        table.meta.client.get_waiter('table_exists').wait(TableName=USER_LOCATION)
+        print('table created with rows ' + str(table.item_count))
+    else:
+        print(USER_LOCATION + " table already exists")
 
 
 create_tables()

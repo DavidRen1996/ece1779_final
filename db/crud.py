@@ -2,6 +2,8 @@ import boto3
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from boto3.dynamodb.conditions import Key, Attr
+import math
+from decimal import Decimal
 
 from db.constants import *
 
@@ -49,6 +51,18 @@ def update_photo_info(photo_info):
             PHOTO_TYPE: photo_info.photo_type,
             GENDER_AND_INTEREST: photo_info.gender_and_interest,
             RELATED_PHOTOS_MAP: photo_info.related_photos
+        })
+    return response
+
+
+def update_user_location(user_location):
+    table = dynamodb.Table(USER_LOCATION)
+    response = table.put_item(
+        Item={
+            GENDER_AND_INTEREST: user_location.gender_and_interest,
+            USERNAME: user_location.username,
+            LATITUDE: Decimal(str(user_location.latitude)),
+            LONGITUDE: Decimal(str(user_location.longitude))
         })
     return response
 
@@ -115,6 +129,23 @@ def select_all_photo_info_for_user(username, photo_type):
     return resolve_response(response)
 
 
+# this functions needs the lati and long to be in decimal degrees
+def select_nearby_users(gender_and_interest, latitude, longitude, distance_km):
+    latitude_delta = distance_km / DEGREE_OF_LATITUDE_IN_KM
+    longitude_delta = get_longitude_degree_from_distance(distance_km, latitude)
+    interest_list = GENDER_INTEREST_MAP[gender_and_interest]
+
+    table = dynamodb.Table(PHOTO_INFO)
+    response = table.scan(
+        FilterExpression=Key(GENDER_AND_INTEREST).eq(interest_list[0]) | Key(GENDER_AND_INTEREST).eq(
+            interest_list[1]) & Attr(LATITUDE).between(Decimal(str(latitude - latitude_delta)),
+                                                       Decimal(str(latitude + latitude_delta))) & Attr(
+            LONGITUDE).between(Decimal(str(longitude - longitude_delta)), Decimal(str(longitude + longitude_delta)))
+    )
+
+    return resolve_response(response)
+
+
 def resolve_response(response):
     if 'Item' in response:
         return response['Item']
@@ -123,3 +154,11 @@ def resolve_response(response):
         return response['Items']
 
     return None
+
+
+def get_longitude_degree_from_distance(distance_km, latitude):
+    one_degree_longitude_km = math.fabs(math.cos(latitude)) * 111.321
+
+    if one_degree_longitude_km == 0:
+        return 0
+    return distance_km / one_degree_longitude_km

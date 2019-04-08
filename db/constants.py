@@ -2,6 +2,7 @@
 PUBLIC_USER_INFO = 'public_user_info'
 PRIVATE_USER_INFO = 'private_user_info'
 PHOTO_INFO = 'photo_info'
+USER_LOCATION = 'user_location'
 
 USERNAME = 'username'
 EMAIL = 'email'
@@ -19,6 +20,9 @@ PENDING_REQUESTS_MAP = 'pending_requests_map'
 RECEIVED_INQUIRES = 'received_inquiries_map'
 PHOTO_TYPE = 'photo_type'
 PHOTO_ID_LOCATION='photo_id_location'
+LATITUDE = 'latitude'
+LONGITUDE = 'longitude'
+
 
 PHOTO_TYPE_SELF = 1
 PHOTO_TYPE_INTERESTED = 2
@@ -38,3 +42,6 @@ GENDER_INTEREST_MAP = {
     5: (1, 3),
     6: (1, 3, 4, 6)
 }
+
+DEGREE_OF_LATITUDE_IN_KM = 111
+DEGREE_OF_LONGITUDE_IN_KM_AT_EQUATOR = 111.321
