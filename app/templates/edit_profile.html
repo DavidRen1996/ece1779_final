@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<style>
+    .edit-section{
+        height: 100%;
+        padding-top: 150px;
+        text-align: center;
+        color:yellow;
+        background-image:url({{url_for('static',filename='image/background_two.jpg')}});
+        background-position:center;
+        background-repeat:no-repeat;
+        background-size:cover;
+    }
+</style>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="canonical" href="https://html5-templates.com/" />
+    <title>My First Choice</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <meta name="description" content="Simplified Bootstrap template with sticky menu">
+    <link href="{{url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='css/sticky-menu.css')}}" rel="stylesheet">
+</head>
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+
+    <!-- Welcome   -->
+    <section id="edit" class="edit-section">
+        <div class="container">
+            <div class="row">
+                <h1>Choose a new Photo as Profile</h1>
+                <!--<button class="w3-button w3-xlarge w3-black">Upload Photo</button>-->
+                <p>&nbsp;</p>
+                <form class="center" method="post" action="{{url_for('edit_photo')}}" enctype="multipart/form-data">
+
+                    <center><input type="file" name="new_profile" accept="image/*" multiple></center>
+                    <p>&nbsp;</p>
+
+                    <button class="center w3-btn w3-ripple w3-yellow" type="submit">Edit</button>
+                </form>
+                <p>&nbsp;</p>
+
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <!-- jQuery -->
+    <script src="{{url_for('static',filename='js/jquery.js')}}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
+
+    <!-- Scrolling Nav JavaScript -->
+    <script src="{{url_for('static',filename='js/jquery.easing.min.js')}}"></script>
+    <script src="{{url_for('static',filename='js/sticky-menu.js')}}"></script>
+
+</body>
+
+</html>
+
+
+
