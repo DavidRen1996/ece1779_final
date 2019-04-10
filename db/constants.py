@@ -1,3 +1,4 @@
+S3_BUCKET_NAME = 'dongxuren1779a2'
 
 PUBLIC_USER_INFO = 'public_user_info'
 PRIVATE_USER_INFO = 'private_user_info'
@@ -24,7 +25,7 @@ LATITUDE = 'latitude'
 LONGITUDE = 'longitude'
 
 
-PHOTO_TYPE_SELF = 1
+PHOTO_TYPE_PROFILE = 1
 PHOTO_TYPE_INTERESTED = 2
 
 GENDER_AND_INTEREST_MF = 1

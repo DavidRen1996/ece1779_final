@@ -67,6 +67,22 @@ def update_user_location(user_location):
     return response
 
 
+def overwrite_profile_photo(previous_name, photo_info):
+    table = dynamodb.Table(PHOTO_INFO)
+    response = table.update_item(
+        Key={
+            USERNAME: photo_info.username,
+            PHOTO_LOCATION: previous_name
+        },
+        UpdateExpression='set PHOTO_TYPE=:r',
+        ExpressionAttributeValues={
+            ':r': PHOTO_TYPE_PROFILE
+        },
+        ReturnValues="UPDATED_NEW"
+    )
+    return response
+
+
 def select_public_user_info(username):
     table = dynamodb.Table(PUBLIC_USER_INFO)
     response = table.get_item(
@@ -85,6 +101,22 @@ def select_all_public_user_info(gender_and_interest):
             interest_list[1])
     )
     return resolve_response(response)
+
+
+# only use this if the username is already in the session
+def select_private_user_info(username):
+    table = dynamodb.Table(PRIVATE_USER_INFO)
+    response = table.get_item(
+        Key={
+            USERNAME: username
+        }
+    )
+
+    if 'Item' not in response:
+        print('username ' + username + ' not found')
+        return None
+
+    return response['Item']
 
 
 def select_private_user_info(username, password):

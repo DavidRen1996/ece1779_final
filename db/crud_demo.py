@@ -25,7 +25,7 @@ def demo_update_private_user_info():
 
 
 def demo_update_photo_info():
-    photo_info = PhotoInfo('username1', 'no_photo_location', PHOTO_TYPE_SELF, GENDER_AND_INTEREST_MF,
+    photo_info = PhotoInfo('username1', 'no_photo_location', PHOTO_TYPE_PROFILE, GENDER_AND_INTEREST_MF,
                            {'photo_location_of_username2': 'username2', 'photo_location_of_username3': 'username3'})
     response = update_photo_info(photo_info)
     print("update_photo_info succeeded:")
@@ -61,7 +61,7 @@ def demo_select_photo_info():
 
 
 def demo_select_all_photo_info_for_user():
-    response = select_all_photo_info_for_user('username1', PHOTO_TYPE_SELF)
+    response = select_all_photo_info_for_user('username1', PHOTO_TYPE_PROFILE)
     print("select_all_photo_info_for_user succeeded:")
     print(response)
 
