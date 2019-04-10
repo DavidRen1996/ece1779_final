@@ -1,7 +1,56 @@
 <!doctype html>
 <html lang="en" class="no-js">
 <style>
-    background-image: "image/main.jpg";
+    #map {
+        height: 100%;
+        left:20px;
+        width:400px;
+        height:400px;
+        border:2px solid:#73AD21
+     }
+     .profile-section{
+        min-height:100vh;
+        background:#fff;
+        padding-top: 150px;
+        text-align: center;
+        background-image:url({{url_for('static',filename='image/background_one.jpg')}});
+        background-position:center;
+        background-repeat:no-repeat;
+        background-size:cover;
+
+     }
+     .recommand_first{
+        min-height:100vh;
+        background:#fff;
+        padding-top: 150px;
+        text-align: center;
+        background-image:url({{url_for('static',filename='image/bg3.jpg')}});
+        background-position:center;
+        background-repeat:no-repeat;
+        background-size:cover;
+
+     }
+     .recommand_section{
+        min-height:100vh;
+        background:#fff;
+        padding-top: 150px;
+        text-align: center;
+        background-image:url({{url_for('static',filename='image/bg4.jpg')}});
+        background-position:center;
+        background-repeat:no-repeat;
+        background-size:cover;
+     }
+     .contact-section{
+        min-height:100vh;
+        background:#fff;
+        padding-top: 150px;
+        text-align: center;
+        background-image:url({{url_for('static',filename='image/main.jpg')}});
+        background-position:center;
+        background-repeat:no-repeat;
+        background-size:cover;
+     }
+
 </style>
 <head>
     <meta charset="utf-8">
@@ -35,16 +84,22 @@
                         <a class="page-scroll" href="#page-top"></a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#about">My Life</a>
+                        <a class="page-scroll" href="#abou t">My Life</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#whatwedo">Recommand</a>
+                        <a class="page-scroll" href="#r1">Recommand</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#location">Recommand with Location</a>
                     </li>
                     <li>
                         <a class="page-scroll" href="#contact">Contact</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="">Logout</a>
+                        <a class="page-scroll" href="{{url_for('logout')}}">Logout</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="{{url_for('edit_profile')}}">Edit</a>
                     </li>
                 </ul>
             </div>	<!-- .navbar-collapse -->
@@ -52,20 +107,18 @@
     </nav>
 
     <!-- Welcome   -->
-    <section id="welcome" class="welcome-section">
+    <section id="welcome" class="profile-section">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
                     <h1>Profile</h1>
-                    <img src="{{url_for('static',filename='image/main.jpg')}}" alt="Paris" class="center" style="width:50px;height:50px;">
+                    <img src="{{url_profile}}" alt="Paris" class="center" style="width:50px;height:50px;">
 
-                    <li>Age:</li>
+                    <li>username:{{username}}</li>
                     <p>&nbsp;</p>
-                    <li>Name:</li>
+                    <li>Bio:{{bio}}</li>
                     <p>&nbsp;</p>
-                    <li>Bio:</li>
-                    <p>&nbsp;</p>
-                    <p>insert your content here</p>
+
 
 
                 </div>
@@ -79,32 +132,28 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1>My Life</h1>
-                    <p>insert your content here</p>
+
                 </div>
                 <div>
                     <li>Add New Post Here</li>
-                    <form action="{{url_for('ui')}}" method="get" >
+                    <form action="{{url_for('post')}}" method="get" >
+                        <!-- need modification here-->
                         <button class="w3-button w3-xlarge w3-black" type="submit">+</button>
                     </form>
-                    <!--<button class="w3-button w3-xlarge w3-black" onclick="window.location.href={{url_for('ui')}};">+</button>-->
+
                     <p>&nbsp</p>
                 </div>
                 <div>
-                    <li>
-                        <img src="{{url_for('static',filename='image/main.jpg')}}" alt="Paris" class="center" style="width:50px;height:50px;">
-                        <img src="{{url_for('static',filename='image/main.jpg')}}" alt="Paris" class="center" style="width:50px;height:50px;">
-                    </li>
-                    <li>
-                        <img src="{{url_for('static',filename='image/main.jpg')}}" alt="Paris" class="center" style="width:50px;height:50px;">
-                        <img src="{{url_for('static',filename='image/main.jpg')}}" alt="Paris" class="center" style="width:50px;height:50px;">
-                    </li>
+                    {%for index in url_list%}
+                        <a><img src = '{{index}}' style="width:100px;height:100px;"> </a>
+                    {%endfor%}
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Recommand -->
-    <section id="whatwedo" class="whatwedo-section">
+    <section id="r1" class="recommand_first">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -116,11 +165,99 @@
         <div>
             <li>Upload a Photo to Start Recommendation</li>
             <p>&nbsp;</p>
-            <form method="post" action="" name="upload_comparephoto">
+            <form method="post" action="{{url_for('recommand')}}" enctype="multipart/form-data" method="post" name="upload_comparephoto">
                 <center><input type="file" name="Desired Photo" accept="image/*" multiple></center>
                 <p>&nbsp;</p>
-                <center><input type="submit" name="upload"></center>
+                <center><input type="submit" name="Search"></center>
             </form>
+            <div id="display_one">
+                {%for item in matched%}
+                <a href="{{url_for('browse',photo_username=item[1])}}"><img src = '{{item[0]}}' style="width:100px;height:100px;"></a>
+
+                {%endfor%}
+            </div>
+            <!--<button class="w3-button w3-xlarge w3-circle w3-teal">+</button>-->
+        </div>
+    </section>
+
+    <section id="location" class="recommand_section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Recommand with Location</h1>
+                </div>
+
+            </div>
+        </div>
+        <div>
+            <li>Upload a Photo to Start Recommendation</li>
+            <p>&nbsp;</p>
+            <form method="post" action="{{url_for('recommand')}}" enctype="multipart/form-data" method="post" name="upload_comparephoto">
+                <center><input type="file" name="Desired Photo" accept="image/*" multiple></center>
+                <p>&nbsp;</p>
+                <label>Search Range(km)</label>
+                <select name="range">
+                    <option value="1">1</option>
+                    <option value="10">10</option>
+                    <option value="100">100</option>
+                    <option value="1000">1000</option>
+                    <option value="10000">10000</option>
+                </select>
+                <center><input type="submit" name="Search"></center>
+            </form>
+
+            <div id="map"></div>
+            <script>
+      // Note: This example requires that you consent to location sharing when
+      // prompted by your browser. If you see the error "The Geolocation service
+      // failed.", it means you probably did not give permission for the browser to
+      // locate you.
+      var map, infoWindow;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 6
+        });
+        infoWindow = new google.maps.InfoWindow;
+
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+            infoWindow.open(map);
+            map.setCenter(pos);
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+      }
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBw_q8wg4axroiiJzsMkZTJPPS1jKTw6Ks&callback=initMap">
+    </script>
+            <div>
+                {%for item in matched%}
+                <a href="{{url_for('browse',photo_username=item[1])}}"><img src = '{{item[0]}}' style="width:100px;height:100px;"></a>
+
+                {%endfor%}
+            </div>
             <!--<button class="w3-button w3-xlarge w3-circle w3-teal">+</button>-->
         </div>
     </section>
@@ -131,7 +268,11 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1>Contact Section</h1>
-                    <p>insert your content here</p>
+                    <li>email:{{email}}</li>
+                    <p>&nbsp;</p>
+                    <li>region:{{region}}</li>
+                    <p>&nbsp;</p>
+
                 </div>
             </div>
         </div>

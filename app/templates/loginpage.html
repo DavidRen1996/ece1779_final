@@ -5,9 +5,17 @@
     height: 100%;
     padding-top: 150px;
     text-align: center;
-    background: #DB5A5A;
+    background-image:url({{url_for('static',filename='image/login.jpg')}});
+    background-position:center;
+    background-repeat:no-repeat;
+    background-size:cover;
 
 }
+</style>
+<style>
+    .regi-section{
+    background-image:url({{url_for('static',filename='image/regi.jpg')}});
+    }
 </style>
 <head>
     <meta charset="UTF-8">
@@ -23,6 +31,7 @@
     <link href="{{url_for('static',filename='css/sticky-menu.css')}}" rel="stylesheet">
 </head>
 <body>
+{{ error if error != None }}
 <script>
     function login_check(){
         var name=document.forms["loginform"]['login_username'].value;
@@ -39,13 +48,23 @@
 </script>
 <script>
     function signup_check(){
+
         var name=document.forms["signupform"]['signup_username'].value;
         var pword=document.forms["signupform"]['signup_password'].value;
-        var age=document.forms["signupform"]['Age'].value;
+        var pword_confirm=document.forms["signupform"]['confirm_signup_password'].value;
+        var age=document.forms["signupform"]['Birthday'].value;
         var sex=document.forms["signupform"]['Sex'].value;
         var Bio=document.forms["signupform"]['Bio'].value;
         var email=document.forms["signupform"]['email'].value;
         var region=document.forms["signupform"]['region'].value;
+        if (pword_confirm != pword){
+           alert("Password not match!");
+           return false;
+        }
+        if (pword_confirm==null || pword_confirm==""){
+            alert("Please fill in all lines!");
+            return false;
+        }
         if (email==null || email==""){
             alert("Please fill in all lines!");
             return false;
@@ -76,13 +95,13 @@
         }
     }
 </script>
-<section id="login" class="login-section">
+<section id="login" class="login-section" )>
     <h1>My First Choice</h1>
 
         <div class="container">
             <h1>Login</h1>
             <br>
-            <form method="post" action='' name="loginform" onsubmit="return login_check()">
+            <form method="post" action='{{url_for("login_submit")}}' name="loginform" onsubmit="return login_check()">
                 <li>
                     <label>username:</label>
                 <input type="text" name="login_username" placeholder="username"/>
@@ -102,51 +121,119 @@
     </section>
 
     <!-- About -->
-    <section id="about" class="about-section">
+    <section id="about" class="regi-section">
         <div class="container">
             <div class="row">
-                <h1>Register</h1>
-                <form method="post" action='' name="signupform" onsubmit="return signup_check()">
-                    <li>
+                <center><h1>Register</h1></center>
+                <br>
+                <form method="post" action='{{url_for("new_submit")}}' name="signupform" enctype="multipart/form-data" method="post" onsubmit="return signup_check()">
+
+                        <center>
                         <label>Name:</label>
-                        <input type="text" name="signup_username" placeholder="Name"/>
-                    </li>
-                    <li>
-                        <label>Age:</label>
-                        <input type="text" name="Age" placeholder="Age"/>
-                    </li>
-                    <li>
-                        <label>Sex:</label>
-                        <input type="text" name="Sex" placeholder="boy or girl"/>
-                    </li>
-                    <li>
+                        <input type="text" name="signup_name" placeholder="Name"/></center>
+
+
+                        <center>
+                        <label>Username:</label>
+                        <input type="text" name="signup_username" placeholder="Name"/></center>
+
+
+                        <center>
+                        <label>Birthday:</label>
+                        <select name="year">
+                            <option value="1988">1988</option>
+                            <option value="1989">1989</option>
+                            <option value="1991">1991</option>
+                            <option value="1992">1992</option>
+                            <option value="1993">1993</option>
+                            <option value="1994">1994</option>
+                            <option value="1995">1995</option>
+                            <option value="1996">1996</option>
+                            <option value="1997">1997</option>
+                            <option value="1998">1998</option>
+                            <option value="1999">1999</option>
+
+
+                        </select></center>
+                        <center>
+                            <select name="month">
+                                <option value="Jan">Jan</option>
+                                <option value="Feb">Feb</option>
+                                <option value="Mar">Mar</option>
+                                <option value="Apr">Apr</option>
+                                <option value="May">May</option>
+                                <option value="June">June</option>
+                                <option value="July">July</option>
+
+                                <option value="Aug">Aug</option>
+                                <option value="Sep">Sep</option>
+                                <option value="Oct">Oct</option>
+                                <option value="Nov">Nov</option>
+                                <option value="Dec">Dec</option>
+                            </select>
+                        </center>
+
+
+                        <!--need modification here-->
+
+                        <center>
+                        <label>Gender:</label>
+                        <select name="Sex">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                        <select name="interest">
+                            <option value="male">male</option>
+                            <option value="female">female</option>
+                            <option value="both">both</option>
+                        </select>
+                            </center>
+                        <!--need modification here-->
+
+                        <center>
                         <label>Bio:</label>
                         <input type="text" name="Bio" placeholder="Bio"/>
-                    </li>
-                    <li>
-                        <label>Password:</label>
+                            </center>
+
+                        <center>
+                            <label>Password:</label>
                         <input type="password" name="signup_password" placeholder="password"/>
-                    </li>
-                    <li>
+                        </center>
+
+
+                        <center>
+                           <label>Confirm Password:</label>
+                            <input type="password" name="confirm_signup_password" placeholder="confirm password"/>
+                        </center>
+
+
+                        <center>
                         <label>Email:</label>
-                        <input type="email" name="email" placeholder="email"/>
-                    </li>
-                    <li>
-                        <label>Region or Address:</label>
+                        <input type="email" name="email" placeholder="email"/></center>
+
+
+                        <center>
+                            <label>Region or Address:</label>
+
                         <input type="text" name="region" placeholder="region or address"/>
-                    </li>
+                        </center>
+
+
 
 
                         <center>
                             <label>Profile Photo:</label>
-                            <input type="file" name="Profile Photo" accept="image/*" multiple>
+                            <input type="file" name="Profile_Photo" accept="image/*" multiple>
                         </center>
 
 
                     <p>&nbsp;</p>
-                    <button class="w3-button w3-xlarge w3-black" type="submit">Register</button>
+                    <center><button class="w3-button w3-xlarge w3-black" type="submit">Register</button></center>
 
                 </form>
+                </br>
+            </div>
+            </div>
             </div>
         </div>
     </section>
