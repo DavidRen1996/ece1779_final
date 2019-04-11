@@ -76,7 +76,7 @@ def overwrite_profile_photo(previous_name, photo_info):
         },
         UpdateExpression='set PHOTO_TYPE=:r',
         ExpressionAttributeValues={
-            ':r': PHOTO_TYPE_SELF
+            ':r': PHOTO_TYPE_POST
         },
         ReturnValues="UPDATED_NEW"
     )
@@ -167,7 +167,7 @@ def select_nearby_users(gender_and_interest, latitude, longitude, distance_km):
     longitude_delta = get_longitude_degree_from_distance(distance_km, latitude)
     interest_list = GENDER_INTEREST_MAP[gender_and_interest]
 
-    table = dynamodb.Table(PHOTO_INFO)
+    table = dynamodb.Table(USER_LOCATION)
     response = table.scan(
         FilterExpression=Key(GENDER_AND_INTEREST).eq(interest_list[0]) | Key(GENDER_AND_INTEREST).eq(
             interest_list[1]) & Attr(LATITUDE).between(Decimal(str(latitude - latitude_delta)),
@@ -194,6 +194,7 @@ def get_longitude_degree_from_distance(distance_km, latitude):
     if one_degree_longitude_km == 0:
         return 0
     return distance_km / one_degree_longitude_km
+
 
 def delete_posted_photo(photo_info):
     table = dynamodb.Table(PHOTO_INFO)

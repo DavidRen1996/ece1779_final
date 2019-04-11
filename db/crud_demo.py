@@ -9,7 +9,7 @@ from db.crud import *
 
 
 def demo_update_public_user_info():
-    public_user_info = PublicUserInfo('username1', 'email1', 'name1', '2000-01-01', GENDER_AND_INTEREST_MF, 'region1',
+    public_user_info = PublicUserInfo('username1', 'email1', 'name1', 'profile_photo_location1', '2000-01-01', GENDER_AND_INTEREST_MF, 'region1',
                                       'description1')
     response = update_public_user_info(public_user_info)
     print("demo_update_public_user_info succeeded:")
@@ -25,7 +25,7 @@ def demo_update_private_user_info():
 
 
 def demo_update_photo_info():
-    photo_info = PhotoInfo('username1', 'no_photo_location', PHOTO_TYPE_PROFILE, GENDER_AND_INTEREST_MF,
+    photo_info = PhotoInfo('username1', 'no_photo_location', PHOTO_TYPE_POST, GENDER_AND_INTEREST_MF,
                            {'photo_location_of_username2': 'username2', 'photo_location_of_username3': 'username3'})
     response = update_photo_info(photo_info)
     print("update_photo_info succeeded:")
@@ -61,7 +61,7 @@ def demo_select_photo_info():
 
 
 def demo_select_all_photo_info_for_user():
-    response = select_all_photo_info_for_user('username1', PHOTO_TYPE_PROFILE)
+    response = select_all_photo_info_for_user('username1', PHOTO_TYPE_POST)
     print("select_all_photo_info_for_user succeeded:")
     print(response)
 

@@ -91,12 +91,12 @@ def new_submit():
     s3 = boto3.client('s3')
     full_filename = create_filename(profile_photo)
     s3.upload_fileobj(profile_photo, 'dongxuren1779a2', full_filename)
-    public_info = PublicUserInfo(username, email, name, Birthday, Sex, region,
+    public_info = PublicUserInfo(username, email, name, full_filename, Birthday, Sex, region,
                                  Bio)
     response_public = crud.update_public_user_info(public_info)
     private_info = PrivateUserInfo(username, password, None, None, None)
     response_private = crud.update_private_user_info(private_info)
-    photo_infos = PhotoInfo(username, full_filename, constants.PHOTO_TYPE_PROFILE, Sex, None)
+    photo_infos = PhotoInfo(username, full_filename, constants.PHOTO_TYPE_POST, Sex, None)
     response = crud.update_photo_info(photo_infos)
 
     return redirect(url_for('load_homepage'))
@@ -184,7 +184,7 @@ def recommand():
     # this list should include all profile photo location
 
     for item in response_profile:
-        if item[constants.PHOTO_TYPE] == constants.PHOTO_TYPE_PROFILE:
+        if item[constants.PHOTO_TYPE] == constants.PHOTO_TYPE_POST:
             location = item[constants.PHOTO_LOCATION]
             photo_owner = item[constants.USERNAME]
             owner_location_tuple = (location, photo_owner)
@@ -212,7 +212,7 @@ def recommand():
     post_region = response_public[constants.REGION]
     post_email = response_public[constants.EMAIL]
     post_bio = response_public[constants.DESCRIPTION]
-    response_profile = crud.select_all_photo_info_for_user(username, constants.PHOTO_TYPE_PROFILE)
+    response_profile = crud.select_all_photo_info_for_user(username, constants.PHOTO_TYPE_POST)
 
     trans = Translator()
     translate_name = trans.translate(post_username)

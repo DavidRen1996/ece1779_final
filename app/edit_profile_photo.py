@@ -24,9 +24,9 @@ def edit_photo():
     full_filename = create_filename(new_profile_photo)
     print(full_filename)
     # todo fix this, select profile image based on profile
-    response_profile = select_all_photo_info_for_user(username, PHOTO_TYPE_PROFILE)
+    response_profile = select_all_photo_info_for_user(username, PHOTO_TYPE_POST)
     profile_location = response_profile[0]
-    profile_info = PhotoInfo(username, full_filename, PHOTO_TYPE_PROFILE, None, None)
+    profile_info = PhotoInfo(username, full_filename, PHOTO_TYPE_POST, None, None)
 
     response = update_photo_info(profile_info)
 

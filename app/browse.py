@@ -38,7 +38,7 @@ def browse(photo_username):
         if post_interest == 4:
             post_gender.append('female')
 
-    response_profile = select_all_photo_info_for_user(photo_username, PHOTO_TYPE_PROFILE)
+    response_profile = select_all_photo_info_for_user(photo_username, PHOTO_TYPE_POST)
 
     profile_location = response_profile[0]
     photo_location = profile_location[PHOTO_LOCATION]
