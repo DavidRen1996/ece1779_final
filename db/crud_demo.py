@@ -24,8 +24,8 @@ def demo_update_private_user_info():
     print(json.dumps(response, indent=4))
 
 
-def demo_update_photo_info():
-    photo_info = PhotoInfo('username1', 'no_photo_location', PHOTO_TYPE_POST, GENDER_AND_INTEREST_MF,
+def demo_update_photo_info(photo_location):
+    photo_info = PhotoInfo('username1', photo_location, PHOTO_TYPE_PROFILE, GENDER_AND_INTEREST_MF,
                            {'photo_location_of_username2': 'username2', 'photo_location_of_username3': 'username3'})
     response = update_photo_info(photo_info)
     print("update_photo_info succeeded:")
@@ -33,7 +33,7 @@ def demo_update_photo_info():
 
 
 def demo_update_user_location():
-    user_location = UserLocation(1, 'username1', 10.01, 12.01)
+    user_location = UserLocation(2, 'a2', 100.01, 100.01)
     response = update_user_location(user_location)
     print("update_user_location succeeded:")
     print(json.dumps(response, indent=4))
@@ -61,7 +61,7 @@ def demo_select_photo_info():
 
 
 def demo_select_all_photo_info_for_user():
-    response = select_all_photo_info_for_user('username1', PHOTO_TYPE_POST)
+    response = select_all_photo_info_for_user('username1', PHOTO_TYPE_PROFILE)
     print("select_all_photo_info_for_user succeeded:")
     print(response)
 
@@ -72,4 +72,4 @@ def demo_select_nearby_users():
     print(response)
 
 
-demo_select_nearby_users()
+demo_update_user_location()

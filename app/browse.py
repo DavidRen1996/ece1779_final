@@ -1,5 +1,6 @@
 from flask import render_template
 from app import webapp
+from app.util import get_photo_url
 from db.crud import *
 from db.constants import *
 import boto3
@@ -42,22 +43,11 @@ def browse(photo_username):
 
     profile_location = response_profile[0]
     photo_location = profile_location[PHOTO_LOCATION]
-    url_profile = s3.generate_presigned_url('get_object',
-                                            Params={
-                                                'Bucket': S3_BUCKET_NAME,
-                                                'Key': photo_location,
-
-                                            },
-                                            ExpiresIn=3600)
+    url_profile = get_photo_url(photo_location)
     url_post_list = []
     for index in response_photo:
         location = index[PHOTO_LOCATION]
-        url = s3.generate_presigned_url('get_object',
-                                        Params={
-                                            'Bucket': S3_BUCKET_NAME,
-                                            'Key': location,
-                                        },
-                                        ExpiresIn=3600)
+        url = get_photo_url(location)
         url_post_list.append(url)
     return render_template('browse.html', username=post_username, bio=post_bio, email=post_email, region=post_region,
                            url_list=url_post_list, url_profile=url_profile, birthday=post_birth,

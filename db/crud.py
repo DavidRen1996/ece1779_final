@@ -104,7 +104,7 @@ def select_all_public_user_info(gender_and_interest):
 
 
 # only use this if the username is already in the session
-def select_private_user_info(username):
+def select_private_user_info_no_password(username):
     table = dynamodb.Table(PRIVATE_USER_INFO)
     response = table.get_item(
         Key={
@@ -156,7 +156,7 @@ def select_all_photo_info_for_user(username, photo_type):
     table = dynamodb.Table(PHOTO_INFO)
     response = table.query(
         KeyConditionExpression=Key(USERNAME).eq(username),
-        FilterExpression=Attr(PHOTO_TYPE).eq(photo_type),
+        FilterExpression=Attr(PHOTO_TYPE).eq(photo_type)
     )
     return resolve_response(response)
 
@@ -204,3 +204,4 @@ def delete_posted_photo(photo_info):
             PHOTO_LOCATION:photo_info.photo_location
         }
     )
+

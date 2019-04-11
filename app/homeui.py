@@ -6,6 +6,7 @@ from db.public_user_info import PublicUserInfo
 from db.private_user_info import PrivateUserInfo
 from db.photo_info import PhotoInfo
 from app import ml_util
+from app.util import get_photo_url
 import datetime
 import boto3
 import os
@@ -30,20 +31,15 @@ def login_submit():
         session['current_password'] = request.form['login_password']
         uname = request.form['login_username']
         pword = request.form['login_password']
-        response = crud.select_private_user_info(uname)
+        response = crud.select_private_user_info(uname, pword)
+
         if response is None:
-            print('current not registered')
-            error = 'current not registered'
+            error = 'current not registered or password is incorrect'
+            print(error)
             return render_template('loginpage.html', error=error)
-        else:
-            extracted_password = response[constants.ENCRYPTED_PASSWORD]
-            if extracted_password == pword:
-                print('login success')
-                return redirect(url_for('load_homepage'))
-            else:
-                print('password not match')
-                error = 'password not match'
-                return render_template('loginpage.html', error=error)
+
+        return redirect(url_for('load_homepage'))
+
 
 
 def filename_extension(filename):
@@ -98,7 +94,7 @@ def new_submit():
     response_public = crud.update_public_user_info(public_info)
     private_info = PrivateUserInfo(username, password, None, None, None)
     response_private = crud.update_private_user_info(private_info)
-    photo_infos = PhotoInfo(username, full_filename, constants.PHOTO_TYPE_POST, Sex, None)
+    photo_infos = PhotoInfo(username, full_filename, constants.PHOTO_TYPE_PROFILE, Sex, None)
     response = crud.update_photo_info(photo_infos)
 
     return redirect(url_for('load_homepage'))
@@ -132,23 +128,11 @@ def load_homepage():
 
     profile_location = response_profile[0]
     photo_location = profile_location[constants.PHOTO_LOCATION]
-    url_profile = s3.generate_presigned_url('get_object',
-                                            Params={
-                                                'Bucket': constants.S3_BUCKET_NAME,
-                                                'Key': photo_location,
-
-                                            },
-                                            ExpiresIn=3600)
+    url_profile = get_photo_url(photo_location)
     url_list = []
     for index in response_photo:
         location = index[constants.PHOTO_LOCATION]
-        url = s3.generate_presigned_url('get_object',
-                                        Params={
-                                            'Bucket': constants.S3_BUCKET_NAME,
-                                            'Key': location,
-
-                                        },
-                                        ExpiresIn=3600)
+        url = get_photo_url(location)
         url_list.append(url)
     print(url_list)
 
@@ -164,10 +148,11 @@ def recommand():
     pword = session['current_password']
     desired_photo = request.files['Desired Photo']
     interested_photo_name = create_filename(desired_photo)
-    latitude = None
-    longitude = None
+
     # todo replace with user input
-    threshold = 30
+    latitude = 100.0
+    longitude = 100.0
+    threshold = 300
 
     s3.upload_fileobj(desired_photo, constants.S3_BUCKET_NAME, interested_photo_name)
 
@@ -181,12 +166,7 @@ def recommand():
 
     potential_interest_urls = []
     for interest in potential_interests:
-        url = s3.generate_presigned_url('get_object',
-                                        Params={
-                                            'Bucket': constants.S3_BUCKET_NAME,
-                                            'Key': interest[1],
-                                        },
-                                        ExpiresIn=3600)
+        url = get_photo_url(interest[1])
         photo_owner_tuple = (url, interest[0])
         potential_interest_urls.append(photo_owner_tuple)
 
@@ -209,23 +189,11 @@ def recommand():
 
     profile_location = response_profile[0]
     photo_location = profile_location[constants.PHOTO_LOCATION]
-    url_profile = s3.generate_presigned_url('get_object',
-                                            Params={
-                                                'Bucket': constants.S3_BUCKET_NAME,
-                                                'Key': photo_location,
-
-                                            },
-                                            ExpiresIn=3600)
+    url_profile = get_photo_url(photo_location)
     url_post_list = []
     for index in response_photo:
         location = index[constants.PHOTO_LOCATION]
-        url = s3.generate_presigned_url('get_object',
-                                        Params={
-                                            'Bucket': constants.S3_BUCKET_NAME,
-                                            'Key': location,
-
-                                        },
-                                        ExpiresIn=3600)
+        url = get_photo_url(location)
         url_post_list.append(url)
 
     return render_template('home.html', matched=potential_interest_urls, username=post_username, bio=post_bio,
