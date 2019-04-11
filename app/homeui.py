@@ -9,7 +9,7 @@ from app import ml_util
 import datetime
 import boto3
 import os
-
+from googletrans import Translator
 
 # logout
 @webapp.route('/logout', methods=['GET', 'POST'])
@@ -121,6 +121,14 @@ def load_homepage():
     post_bio = response_public[constants.DESCRIPTION]
     response_profile = crud.select_profile_photo_info_for_user(username)
 
+    trans = Translator()
+    translate_name = trans.translate(post_username)
+    translated_name = translate_name.text
+    translate_region = trans.translate(post_region)
+    translated_region = translate_region.text
+    translate_bio = trans.translate(post_bio)
+    translated_bio = translate_bio.text
+
     profile_location = response_profile[0]
     photo_location = profile_location[constants.PHOTO_LOCATION]
     url_profile = s3.generate_presigned_url('get_object',
@@ -144,7 +152,8 @@ def load_homepage():
     print(url_list)
 
     return render_template('home.html', username=post_username, bio=post_bio, email=post_email, region=post_region,
-                           url_list=url_list, url_profile=url_profile)
+                           url_list=url_list, url_profile=url_profile,trans_name=translated_name,trans_bio=translated_bio,
+                           trans_region=translated_region)
 
 
 @webapp.route('/recommand', methods=['POST', 'GET'])
@@ -205,6 +214,14 @@ def recommand():
     post_bio = response_public[constants.DESCRIPTION]
     response_profile = crud.select_all_photo_info_for_user(username, constants.PHOTO_TYPE_PROFILE)
 
+    trans = Translator()
+    translate_name = trans.translate(post_username)
+    translated_name = translate_name.text
+    translate_region = trans.translate(post_region)
+    translated_region = translate_region.text
+    translate_bio = trans.translate(post_bio)
+    translated_bio = translate_bio.text
+
     profile_location = response_profile[0]
     photo_location = profile_location[constants.PHOTO_LOCATION]
     url_profile = s3.generate_presigned_url('get_object',
@@ -227,4 +244,5 @@ def recommand():
         url_post_list.append(url)
 
     return render_template('home.html', matched=url_list, username=post_username, bio=post_bio, email=post_email,
-                           region=post_region, url_list=url_post_list, url_profile=url_profile)
+                           region=post_region, url_list=url_post_list, url_profile=url_profile,trans_name=translated_name,
+                           trans_bio=translated_bio,trans_region=translated_region)

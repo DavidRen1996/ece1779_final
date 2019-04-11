@@ -35,3 +35,18 @@ def edit_photo():
     s3.upload_fileobj(new_profile_photo, 'dongxuren1779a2', full_filename)
 
     return redirect(url_for('load_homepage'))
+
+@webapp.route('/delete_photo/<photo_id>', methods=['GET', 'POST'])
+def delete_photo(photo_id):
+    username=session['current_username']
+    response=select_photo_info(username,photo_id)
+    print(response)
+    post_location=response['photo_location']
+    delete_type=response['PHOTO_TYPE']
+    if delete_type==PHOTO_TYPE_PROFILE:
+        return redirect(url_for('load_homepage'))
+    #photo_location=post_location[PHOTO_LOCATION]
+    photo_infos=PhotoInfo(username,post_location,None,None,None)
+
+    reponse_delete=delete_posted_photo(photo_infos)
+    return redirect(url_for('load_homepage'))

@@ -76,7 +76,7 @@ def overwrite_profile_photo(previous_name, photo_info):
         },
         UpdateExpression='set PHOTO_TYPE=:r',
         ExpressionAttributeValues={
-            ':r': PHOTO_TYPE_PROFILE
+            ':r': PHOTO_TYPE_SELF
         },
         ReturnValues="UPDATED_NEW"
     )
@@ -194,3 +194,12 @@ def get_longitude_degree_from_distance(distance_km, latitude):
     if one_degree_longitude_km == 0:
         return 0
     return distance_km / one_degree_longitude_km
+
+def delete_posted_photo(photo_info):
+    table = dynamodb.Table(PHOTO_INFO)
+    response = table.delete_item(
+        Key = {
+            USERNAME:photo_info.username,
+            PHOTO_LOCATION:photo_info.photo_location
+        }
+    )

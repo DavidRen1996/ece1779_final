@@ -130,12 +130,12 @@
 
                         <center>
                         <label>Name:</label>
-                        <input type="text" name="signup_name" placeholder="Name"/></center>
+                        <input type="text" name="signup_name" placeholder="Name" required pattern="[A-Za-z0-9]{1,15}"/></center>
 
 
                         <center>
                         <label>Username:</label>
-                        <input type="text" name="signup_username" placeholder="Name"/></center>
+                        <input type="text" name="signup_username" placeholder="Name" required pattern="[A-Za-z0-9]{1,15}"/></center>
 
 
                         <center>
@@ -182,6 +182,7 @@
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                         </select>
+                            <label>Interest:</label>
                         <select name="interest">
                             <option value="male">male</option>
                             <option value="female">female</option>
