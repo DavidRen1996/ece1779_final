@@ -32,9 +32,10 @@ def edit_photo():
 
     # todo don't forget to update the profile photo information
     response = overwrite_profile_photo(profile_location['photo_location'], profile_info)
-    s3.upload_fileobj(new_profile_photo, 'dongxuren1779a2', full_filename)
+    s3.upload_fileobj(new_profile_photo, S3_BUCKET_NAME, full_filename)
 
     return redirect(url_for('load_homepage'))
+
 
 @webapp.route('/delete_photo/<photo_id>', methods=['GET', 'POST'])
 def delete_photo(photo_id):
@@ -45,7 +46,7 @@ def delete_photo(photo_id):
     delete_type=response['PHOTO_TYPE']
     if delete_type==PHOTO_TYPE_PROFILE:
         return redirect(url_for('load_homepage'))
-    #photo_location=post_location[PHOTO_LOCATION]
+
     photo_infos=PhotoInfo(username,post_location,None,None,None)
 
     reponse_delete=delete_posted_photo(photo_infos)

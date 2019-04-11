@@ -11,6 +11,9 @@ import boto3
 import os
 from googletrans import Translator
 
+s3 = boto3.client('s3')
+
+
 # logout
 @webapp.route('/logout', methods=['GET', 'POST'])
 def logout():
@@ -28,7 +31,7 @@ def login_submit():
         uname = request.form['login_username']
         pword = request.form['login_password']
         response = crud.select_private_user_info(uname)
-        if response == None:
+        if response is None:
             print('current not registered')
             error = 'current not registered'
             return render_template('loginpage.html', error=error)
@@ -65,8 +68,8 @@ def new_submit():
     password = request.form['signup_password']
     year = request.form['year']
     month = request.form['month']
-    Birthday = year + month
-    print(Birthday)
+    birthday = year + month
+    print(birthday)
     sex = request.form['Sex']
     interest = request.form['interest']
     Sex = constants.GENDER_AND_INTEREST
@@ -88,10 +91,9 @@ def new_submit():
     email = request.form['email']
     region = request.form['region']
     profile_photo = request.files['Profile_Photo']
-    s3 = boto3.client('s3')
     full_filename = create_filename(profile_photo)
-    s3.upload_fileobj(profile_photo, 'dongxuren1779a2', full_filename)
-    public_info = PublicUserInfo(username, email, name, full_filename, Birthday, Sex, region,
+    s3.upload_fileobj(profile_photo, constants.S3_BUCKET_NAME, full_filename)
+    public_info = PublicUserInfo(username, email, name, full_filename, birthday, Sex, region,
                                  Bio)
     response_public = crud.update_public_user_info(public_info)
     private_info = PrivateUserInfo(username, password, None, None, None)
@@ -110,16 +112,15 @@ def post():
 @webapp.route('/load_homepage', methods=['POST', 'GET'])
 def load_homepage():
     # use username to get posted image and user profile
-    s3 = boto3.client('s3')
     username = session['current_username']
     response_public = crud.select_public_user_info(username)
-    response_photo = crud.select_all_photo_info_for_user(username)
+    response_photo = crud.select_all_photo_info_for_user(username, constants.PHOTO_TYPE_POST)
     # todo need modification here
     post_username = response_public[constants.USERNAME]
     post_region = response_public[constants.REGION]
     post_email = response_public[constants.EMAIL]
     post_bio = response_public[constants.DESCRIPTION]
-    response_profile = crud.select_profile_photo_info_for_user(username)
+    response_profile = crud.select_all_photo_info_for_user(username, constants.PHOTO_TYPE_PROFILE)
 
     trans = Translator()
     translate_name = trans.translate(post_username)
@@ -152,67 +153,51 @@ def load_homepage():
     print(url_list)
 
     return render_template('home.html', username=post_username, bio=post_bio, email=post_email, region=post_region,
-                           url_list=url_list, url_profile=url_profile,trans_name=translated_name,trans_bio=translated_bio,
+                           url_list=url_list, url_profile=url_profile, trans_name=translated_name,
+                           trans_bio=translated_bio,
                            trans_region=translated_region)
 
 
 @webapp.route('/recommand', methods=['POST', 'GET'])
 def recommand():
-    s3 = boto3.client('s3')
     username = session['current_username']
     pword = session['current_password']
-    Desired_photo = request.files['Desired Photo']
-    full_filename = create_filename(Desired_photo)
+    desired_photo = request.files['Desired Photo']
+    interested_photo_name = create_filename(desired_photo)
+    latitude = None
+    longitude = None
+    # todo replace with user input
+    threshold = 30
 
-    s3.upload_fileobj(Desired_photo, 'dongxuren1779a2', full_filename)
-    url = s3.generate_presigned_url('get_object',
-                                    Params={
-                                        'Bucket': constants.S3_BUCKET_NAME,
-                                        'Key': full_filename,
+    s3.upload_fileobj(desired_photo, constants.S3_BUCKET_NAME, interested_photo_name)
 
-                                    },
-                                    ExpiresIn=3600)
-    # sex=session['current_sex']
-
-    photo_info = PhotoInfo(username, full_filename, constants.PHOTO_TYPE_INTERESTED, None, None)
+    photo_info = PhotoInfo(username, interested_photo_name, constants.PHOTO_TYPE_INTERESTED, None, None)
     crud.update_photo_info(photo_info)
-    # private_info = PrivateUserInfo(username, pword,photo_infos,{},{})
-    # response_private = crud.update_private_user_info(private_info)
-    # ml functions below
-    response_profile = crud.select_all_profile_photo_info()
-    location_list = []
-    # this list should include all profile photo location
+    public_user_info = crud.select_public_user_info(username)
 
-    for item in response_profile:
-        if item[constants.PHOTO_TYPE] == constants.PHOTO_TYPE_POST:
-            location = item[constants.PHOTO_LOCATION]
-            photo_owner = item[constants.USERNAME]
-            owner_location_tuple = (location, photo_owner)
-            location_list.append(owner_location_tuple)
-    response_matched = ml_util.find_matching_photo(full_filename, location_list)
-    print(response_matched)
-    # list of urls that match the search
-    url_list = []
-    for item in response_matched:
+    potential_interests = ml_util.find_nearby_matching_photo(interested_photo_name,
+                                                             public_user_info[constants.GENDER_AND_INTEREST], latitude,
+                                                             longitude, threshold)
+
+    potential_interest_urls = []
+    for interest in potential_interests:
         url = s3.generate_presigned_url('get_object',
                                         Params={
                                             'Bucket': constants.S3_BUCKET_NAME,
-                                            'Key': item[0],
-
+                                            'Key': interest[1],
                                         },
                                         ExpiresIn=3600)
-        photo_owner_tuple = (url, item[1])
-        url_list.append(photo_owner_tuple)
+        photo_owner_tuple = (url, interest[0])
+        potential_interest_urls.append(photo_owner_tuple)
 
     # extract the profile photo, user info, history posts
-    response_public = crud.select_public_user_info(username)
-    response_photo = crud.select_all_photo_info_for_user(username)
-    # todo need modification here
-    post_username = response_public[constants.USERNAME]
-    post_region = response_public[constants.REGION]
-    post_email = response_public[constants.EMAIL]
-    post_bio = response_public[constants.DESCRIPTION]
-    response_profile = crud.select_all_photo_info_for_user(username, constants.PHOTO_TYPE_POST)
+    response_photo = crud.select_all_photo_info_for_user(username, constants.PHOTO_TYPE_POST)
+    response_profile = crud.select_all_photo_info_for_user(username, constants.PHOTO_TYPE_PROFILE)
+
+    post_username = public_user_info[constants.USERNAME]
+    post_region = public_user_info[constants.REGION]
+    post_email = public_user_info[constants.EMAIL]
+    post_bio = public_user_info[constants.DESCRIPTION]
 
     trans = Translator()
     translate_name = trans.translate(post_username)
@@ -243,6 +228,8 @@ def recommand():
                                         ExpiresIn=3600)
         url_post_list.append(url)
 
-    return render_template('home.html', matched=url_list, username=post_username, bio=post_bio, email=post_email,
-                           region=post_region, url_list=url_post_list, url_profile=url_profile,trans_name=translated_name,
-                           trans_bio=translated_bio,trans_region=translated_region)
+    return render_template('home.html', matched=potential_interest_urls, username=post_username, bio=post_bio,
+                           email=post_email,
+                           region=post_region, url_list=url_post_list, url_profile=url_profile,
+                           trans_name=translated_name,
+                           trans_bio=translated_bio, trans_region=translated_region)

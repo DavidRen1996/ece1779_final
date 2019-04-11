@@ -11,7 +11,7 @@ s3 = boto3.client('s3')
 def browse(photo_username):
     print(photo_username)
     response_public = select_public_user_info(photo_username)
-    response_photo = select_all_photo_info_for_user(photo_username)
+    response_photo = select_all_photo_info_for_user(photo_username, PHOTO_TYPE_POST)
     # todo need modification here
     post_username = response_public[USERNAME]
     post_region = response_public[REGION]
@@ -56,7 +56,6 @@ def browse(photo_username):
                                         Params={
                                             'Bucket': S3_BUCKET_NAME,
                                             'Key': location,
-
                                         },
                                         ExpiresIn=3600)
         url_post_list.append(url)

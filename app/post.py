@@ -13,7 +13,7 @@ def post_photo():
     new_file.seek(0)
     username = session['current_username']
     full_filename = create_filename(new_file)
-    s3.upload_fileobj(new_file, 'dongxuren1779a2', full_filename)
+    s3.upload_fileobj(new_file, S3_BUCKET_NAME, full_filename)
     photo_infos = PhotoInfo(username, full_filename, PHOTO_TYPE_POST, None, None)
     response = update_photo_info(photo_infos)
 
